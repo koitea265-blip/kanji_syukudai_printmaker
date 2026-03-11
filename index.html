@@ -36,7 +36,6 @@
       .no-print {
         display: none !important;
       }
-      /* 印刷プレビュー領域をA4用紙全体に広げる */
       .print-container {
         box-shadow: none !important;
         margin: 0 !important;
@@ -46,20 +45,19 @@
         padding: 0 !important;
         overflow: hidden !important;
       }
-      /* スクロールバーなどを消す */
       #app > div > div:nth-child(2) {
         overflow: visible !important;
       }
     }
     
-    /* --- マス目のデザイン (点線の十字リーダー) --- */
+    /* --- マス目のデザイン --- */
     .masu::before {
       content: '';
       position: absolute;
       top: 50%;
       left: 0;
       right: 0;
-      border-top: 1px dotted #888; /* 点線の横線 */
+      border-top: 1px dotted #888;
       pointer-events: none;
     }
     .masu::after {
@@ -68,7 +66,7 @@
       left: 50%;
       top: 0;
       bottom: 0;
-      border-left: 1px dotted #888; /* 点線の縦線 */
+      border-left: 1px dotted #888;
       pointer-events: none;
     }
     
@@ -78,77 +76,136 @@
   <div id="app"></div>
 
   <script>
-    // --- 初期データ定義 (2文字ストックを追加) ---
+    // --- 初期データ定義 ---
     const INITIAL_DATA_2 = [
-      { id: 1, words: ["神話", "祭る", "薬箱", "お湯"] },
-      { id: 2, words: ["使う", "返事", "着る", "問題"] },
-      { id: 3, words: ["朝食", "相手", "洋服", "意味"] },
-      { id: 4, words: ["主語", "配る", "落下", "発見"] },
-      { id: 5, words: ["発音", "船旅", "着地", "新聞"] },
-      { id: 6, words: ["自由", "農家", "気配", "有名"] },
-      { id: 7, words: ["着く", "漢字", "早朝", "一人"] },
-      { id: 8, words: ["明日", "習う", "練る", "実る"] },
-      { id: 9, words: ["物語", "発表", "買う", "写真"] },
-      { id: 10, words: ["様子", "表す", "場所", "全体"] },
-      { id: 11, words: ["落石", "今週", "歩く", "強い"] },
-      { id: 12, words: ["工作", "感想", "送る", "一列"] },
-      { id: 13, words: ["乗る", "暑い", "寒い", "太陽"] }
+      { id: "1", words: ["神話", "祭る", "薬箱", "お湯"] },
+      { id: "2", words: ["使う", "返事", "着る", "問題"] },
+      { id: "3", words: ["朝食", "相手", "洋服", "意味"] },
+      { id: "4", words: ["主語", "配る", "落下", "発見"] },
+      { id: "5", words: ["発音", "船旅", "着地", "新聞"] },
+      { id: "6", words: ["自由", "農家", "気配", "有名"] },
+      { id: "7", words: ["着く", "漢字", "早朝", "一人"] },
+      { id: "8", words: ["明日", "習う", "練る", "実る"] },
+      { id: "9", words: ["物語", "発表", "買う", "写真"] },
+      { id: "10", words: ["様子", "表す", "場所", "全体"] },
+      { id: "11", words: ["落石", "今週", "歩く", "強い"] },
+      { id: "12", words: ["工作", "感想", "送る", "一列"] },
+      { id: "13", words: ["乗る", "暑い", "寒い", "太陽"] }
     ];
 
     const INITIAL_DATA_3 = [
-      { id: 1, words: ["明るい", "決める", "出来事", "六十秒"] },
-      { id: 2, words: ["調べる", "暖かい", "落とす", "内がわ"] },
-      { id: 3, words: ["自動車", "新しい", "美しい", ""] },
-      { id: 4, words: ["千代紙", "日記帳", "宮大工", "発表会"] }
+      { id: "1", words: ["明るい", "決める", "出来事", "六十秒"] },
+      { id: "2", words: ["調べる", "暖かい", "落とす", "内がわ"] },
+      { id: "3", words: ["自動車", "新しい", "美しい", "図書館"] },
+      { id: "4", words: ["千代紙", "日記帳", "宮大工", "発表会"] },
+      { id: "5", words: ["始める", "終わる", "見送る", "持ち物"] },
+      { id: "6", words: ["買い物", "飲み物", "食べ物", "早起き"] },
+      { id: "7", words: ["大急ぎ", "夏休み", "冬休み", "春休み"] },
+      { id: "8", words: ["昼休み", "運動会", "理科室", "図書室"] },
+      { id: "9", words: ["帰り道", "回り道", "通学路", "水族館"] },
+      { id: "10", words: ["動物園", "見学記", "感想文", "予定表"] },
+      { id: "11", words: ["進行表", "夏祭り", "秋祭り", "夕立ち"] },
+      { id: "12", words: ["真夜中", "大通り", "一番星", "三日月"] },
+      { id: "13", words: ["大文字", "小文字", "漢数字", "絵文字"] },
+      { id: "14", words: ["世話係", "進行係", "用具係", "放送係"] }
     ];
+
+    const INITIAL_DATA_4 = [
+      { id: "1", words: ["春夏秋冬", "花鳥風月", "一日一歩", "大器晩成"] },
+      { id: "2", words: ["一生懸命", "以心伝心", "十人十色", "四字熟語"] },
+      { id: "3", words: ["図書館", "自動車", "自由", "有名"] } // ミックスのサンプル
+    ];
+
+    function normalizeData(data) {
+      if (!Array.isArray(data)) return [];
+      let maxId = 0;
+      data.forEach(item => {
+        const idNum = parseInt(item.id, 10);
+        if (!isNaN(idNum) && idNum > maxId) maxId = idNum;
+      });
+      return data.map(item => {
+        let idNum = parseInt(item.id, 10);
+        if (isNaN(idNum) || item.id == null) {
+          maxId++;
+          idNum = maxId;
+        }
+        const words = Array.isArray(item.words) ? item.words : ["", "", "", ""];
+        while(words.length < 4) words.push("");
+        
+        return { ...item, id: String(idNum), words: words };
+      });
+    }
+
+    function escapeHTML(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    const savedStock2 = localStorage.getItem('kanjiStock2_v10') || localStorage.getItem('kanjiStock2_v9') || localStorage.getItem('kanjiStock2_v8');
+    const savedStock3 = localStorage.getItem('kanjiStock3_v10') || localStorage.getItem('kanjiStock3_v9') || localStorage.getItem('kanjiStock3_v8');
+    const savedStock4 = localStorage.getItem('kanjiStock4_v10');
 
     // --- 状態管理 ---
     let state = {
       activeTab: 'print',
       printType: 2,
-      printId: 1,
+      printId: "1",
       grade: Number(localStorage.getItem('kanjiGrade')) || 3,
-      stock2: JSON.parse(localStorage.getItem('kanjiStock2_v5')) || INITIAL_DATA_2,
-      stock3: JSON.parse(localStorage.getItem('kanjiStock3_v5')) || INITIAL_DATA_3
+      stock2: normalizeData(savedStock2 ? JSON.parse(savedStock2) : INITIAL_DATA_2),
+      stock3: normalizeData(savedStock3 ? JSON.parse(savedStock3) : INITIAL_DATA_3),
+      stock4: normalizeData(savedStock4 ? JSON.parse(savedStock4) : INITIAL_DATA_4),
+      modal: null
     };
 
     function saveState() {
       localStorage.setItem('kanjiGrade', state.grade.toString());
-      localStorage.setItem('kanjiStock2_v5', JSON.stringify(state.stock2));
-      localStorage.setItem('kanjiStock3_v5', JSON.stringify(state.stock3));
+      localStorage.setItem('kanjiStock2_v10', JSON.stringify(state.stock2));
+      localStorage.setItem('kanjiStock3_v10', JSON.stringify(state.stock3));
+      localStorage.setItem('kanjiStock4_v10', JSON.stringify(state.stock4));
     }
 
-    // --- UI レンダリング関数群 ---
+    // --- データ取得ヘルパー ---
+    function getTargetStock(type) {
+      if (type === 2) return state.stock2;
+      if (type === 3) return state.stock3;
+      return state.stock4;
+    }
 
-    // 1. ナビゲーションタブ
+    // --- UI レンダリング ---
+
     function renderTabs() {
       return `
-        <div class="no-print bg-sky-600 text-white shadow-md z-10 flex-shrink-0">
+        <div class="no-print bg-sky-600 text-white shadow-md z-10 flex-shrink-0 relative">
           <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center px-4">
             <h1 class="text-xl font-bold py-4 pr-8 border-b border-sky-500 sm:border-none w-full sm:w-auto text-center sm:text-left">
               📝 漢字宿題用プリントメーカー
             </h1>
             <div class="flex w-full sm:w-auto overflow-x-auto">
-              <button onclick="changeTab('print')" class="px-6 py-4 font-bold whitespace-nowrap transition-colors border-b-4 ${state.activeTab === 'print' ? 'bg-sky-700 border-yellow-400' : 'border-transparent hover:bg-sky-500'}">🖨️ プリント作成</button>
-              <button onclick="changeTab('stock2')" class="px-6 py-4 font-bold whitespace-nowrap transition-colors border-b-4 ${state.activeTab === 'stock2' ? 'bg-sky-700 border-emerald-400' : 'border-transparent hover:bg-sky-500'}">📁 2文字ストック</button>
-              <button onclick="changeTab('stock3')" class="px-6 py-4 font-bold whitespace-nowrap transition-colors border-b-4 ${state.activeTab === 'stock3' ? 'bg-sky-700 border-emerald-400' : 'border-transparent hover:bg-sky-500'}">📁 3文字ストック</button>
+              <button type="button" onclick="changeTab('print')" class="px-6 py-4 font-bold whitespace-nowrap transition-colors border-b-4 ${state.activeTab === 'print' ? 'bg-sky-700 border-yellow-400' : 'border-transparent hover:bg-sky-500'}">🖨️ プリント作成</button>
+              <button type="button" onclick="changeTab('stock2')" class="px-6 py-4 font-bold whitespace-nowrap transition-colors border-b-4 ${state.activeTab === 'stock2' ? 'bg-sky-700 border-emerald-400' : 'border-transparent hover:bg-sky-500'}">📁 2文字ストック</button>
+              <button type="button" onclick="changeTab('stock3')" class="px-6 py-4 font-bold whitespace-nowrap transition-colors border-b-4 ${state.activeTab === 'stock3' ? 'bg-sky-700 border-emerald-400' : 'border-transparent hover:bg-sky-500'}">📁 3文字ストック</button>
+              <button type="button" onclick="changeTab('stock4')" class="px-6 py-4 font-bold whitespace-nowrap transition-colors border-b-4 ${state.activeTab === 'stock4' ? 'bg-sky-700 border-emerald-400' : 'border-transparent hover:bg-sky-500'}">📁 4文字ストック</button>
             </div>
           </div>
         </div>
       `;
     }
 
-    // 2. 印刷設定パネル
     function renderSettings() {
-      const data = state.printType === 2 ? state.stock2 : state.stock3;
+      const data = getTargetStock(state.printType);
       const options = data.map(item => `
         <option value="${item.id}" ${state.printId === item.id ? 'selected' : ''}>
-          番号 ${item.id} （${item.words.filter(w=>w).join(', ') || '未入力'}）
+          番号 ${item.id} （${escapeHTML(item.words.filter(w=>w).join(', ')) || '未入力'}）
         </option>
       `).join('');
 
       return `
-        <div class="w-full md:w-80 bg-white p-6 border-r border-gray-200 no-print shadow-sm z-10 flex flex-col flex-shrink-0">
+        <div class="w-full md:w-80 bg-white p-6 border-r border-gray-200 no-print shadow-sm z-10 flex flex-col flex-shrink-0 relative">
           <h2 class="text-lg font-bold mb-6 text-gray-700 border-b pb-2">印刷設定</h2>
           
           <div class="mb-6">
@@ -165,14 +222,15 @@
           <div class="mb-6">
             <label class="block mb-2 font-bold text-gray-600 text-sm">漢字の種類</label>
             <div class="flex bg-gray-100 p-1 rounded-lg">
-              <button onclick="changePrintType(2)" class="flex-1 py-2 rounded-md font-bold transition-all ${state.printType === 2 ? 'bg-white shadow text-sky-600' : 'text-gray-500 hover:bg-gray-200'}">2文字</button>
-              <button onclick="changePrintType(3)" class="flex-1 py-2 rounded-md font-bold transition-all ${state.printType === 3 ? 'bg-white shadow text-sky-600' : 'text-gray-500 hover:bg-gray-200'}">3文字</button>
+              <button type="button" onclick="changePrintType(2)" class="flex-1 py-2 rounded-md font-bold transition-all ${state.printType === 2 ? 'bg-white shadow text-sky-600' : 'text-gray-500 hover:bg-gray-200'}">2文字</button>
+              <button type="button" onclick="changePrintType(3)" class="flex-1 py-2 rounded-md font-bold transition-all ${state.printType === 3 ? 'bg-white shadow text-sky-600' : 'text-gray-500 hover:bg-gray-200'}">3文字</button>
+              <button type="button" onclick="changePrintType(4)" class="flex-1 py-2 rounded-md font-bold transition-all ${state.printType === 4 ? 'bg-white shadow text-sky-600' : 'text-gray-500 hover:bg-gray-200'}">4文字</button>
             </div>
           </div>
 
           <div class="mb-8">
             <label class="block mb-2 font-bold text-gray-600 text-sm">プリント番号を選択</label>
-            <select onchange="changePrintId(Number(this.value))" class="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 cursor-pointer">
+            <select onchange="changePrintId(this.value)" class="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 cursor-pointer">
               ${options}
             </select>
           </div>
@@ -181,12 +239,11 @@
             <p class="text-sm text-gray-500 mb-3 leading-relaxed">
               ※ ブラウザの印刷ダイアログが開きます。<br>レイアウト設定で<strong class="text-gray-700 text-lg text-red-500">「縦」</strong>を選択してください。
             </p>
-            <button onclick="window.print()" class="w-full bg-sky-500 text-white font-bold py-4 rounded-xl shadow-[0_4px_0_#0284c7] active:shadow-[0_0px_0_#0284c7] active:translate-y-1 transition-all flex justify-center items-center gap-2 text-lg">
+            <button type="button" onclick="window.print()" class="w-full bg-sky-500 text-white font-bold py-4 rounded-xl shadow-[0_4px_0_#0284c7] active:shadow-[0_0px_0_#0284c7] active:translate-y-1 transition-all flex justify-center items-center gap-2 text-lg">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
               A4（縦）で印刷
             </button>
             
-            <!-- クレジット表記 -->
             <div class="mt-6 text-center text-xs font-semibold text-gray-400">
               ©2026　漢字宿題用プリントメーカー　ＩＣＴ支援の杜
             </div>
@@ -195,9 +252,8 @@
       `;
     }
 
-    // 3. プリント領域
     function renderPrintLayout() {
-      const data = state.printType === 2 ? state.stock2 : state.stock3;
+      const data = getTargetStock(state.printType);
       const targetItem = data.find(item => item.id === state.printId) || data[0];
       
       if (!targetItem) return `<div class="flex items-center justify-center h-full text-gray-400">データがありません</div>`;
@@ -208,38 +264,49 @@
       const words = [...targetItem.words];
       while(words.length < 4) words.push("");
 
-      const totalRows = state.printType === 2 ? 16 : 15;
-      const masuSize = 16;   // マス目サイズ 16mm
-      const furiSize = 6;    // ふりがな列の幅
-      const textSize = 14;   // ★漢字の文字サイズを 12mm から 14mm に拡大
+      const totalRows = 16; 
+      const masuSize = 16;
+      const furiSize = 6;
+      const textSize = 14;
       
       let wordBlocks = '';
       
-      // 右から左へ 4つの単語列を配置
       words.forEach((word, index) => {
+        const wLen = (word && word.length > 0) ? word.length : state.printType;
+        let colRows = 16;
+        
+        if (wLen === 3) colRows = 15;      
+        else if (wLen === 5) colRows = 15; 
+        else colRows = wLen * Math.floor(16 / wLen); 
+        
+        if (colRows === 0) colRows = state.printType * Math.floor(16 / state.printType); 
+
         const chars = word ? word.split('') : [];
-        while(chars.length < state.printType) chars.push('');
+        while(chars.length < wLen) chars.push('');
 
         let furiRightRows = '';
         let nazoriRows = '';
         let emptyRows = '';
         
         for(let i = 0; i < totalRows; i++) {
-          const char = chars[i % state.printType];
-          const isSample = i < state.printType; // 最初のブロックは見本
-          const textStyleClass = isSample ? 'text-gray-900 font-bold' : 'text-gray-300 font-normal';
-          
-          // 右ふりがな列
           furiRightRows += `<div class="w-[${furiSize}mm] h-[${masuSize}mm] border-b border-gray-800 box-border last:border-b-0"></div>`;
           
-          // 中央なぞりマス
-          nazoriRows += `
-            <div class="masu w-[${masuSize}mm] h-[${masuSize}mm] relative flex items-center justify-center horizontal-tb border-b border-gray-800 box-border last:border-b-0">
-              <span class="relative z-10 text-[${textSize}mm] ${textStyleClass} leading-none" style="transform: translateY(-0.5mm);">${char}</span>
-            </div>
-          `;
+          if (i < colRows) {
+            const char = chars[i % wLen];
+            const isSample = i < wLen;
+            const textStyleClass = isSample ? 'text-gray-900 font-bold' : 'text-gray-300 font-normal';
+            nazoriRows += `
+              <div class="masu w-[${masuSize}mm] h-[${masuSize}mm] relative flex items-center justify-center horizontal-tb border-b border-gray-800 box-border last:border-b-0">
+                <span class="relative z-10 text-[${textSize}mm] ${textStyleClass} leading-none" style="transform: translateY(-0.5mm);">${escapeHTML(char)}</span>
+              </div>
+            `;
+          } else {
+            nazoriRows += `
+              <div class="masu w-[${masuSize}mm] h-[${masuSize}mm] relative flex items-center justify-center horizontal-tb border-b border-gray-800 box-border last:border-b-0">
+              </div>
+            `;
+          }
           
-          // 左空マス (自力)
           emptyRows += `
             <div class="masu w-[${masuSize}mm] h-[${masuSize}mm] relative flex items-center justify-center horizontal-tb border-b border-gray-800 box-border last:border-b-0">
             </div>
@@ -257,26 +324,23 @@
         `;
       });
 
+      // 全体を垂直方向中央にしつつ、左側に余白を持たせるため
+      // justify-center の代わりに右寄りの配置（pr-[12mm]等）を設定
       return `
-        <div class="print-container bg-white box-border shadow-xl print:shadow-none mx-auto flex items-center justify-center" style="width: 210mm; height: 297mm;">
+        <div class="print-container bg-white box-border shadow-xl print:shadow-none mx-auto flex items-center" style="width: 210mm; height: 297mm;">
           
-          <div class="flex flex-row-reverse items-start justify-center" style="height: ${masuSize * totalRows}mm;">
+          <div class="flex flex-row-reverse items-start w-full pr-[12mm]" style="height: ${masuSize * totalRows}mm;">
             
-            <!-- 右端: タイトル・名前欄 -->
-            <div class="w-[25mm] flex flex-col items-center horizontal-tb h-full pr-[3mm] ml-[5mm]">
+            <div class="w-[22mm] flex flex-col items-center horizontal-tb h-full ml-[2mm]">
                <div class="text-[6.5mm] font-bold vertical-rl tracking-[0.3em] mt-[5mm]">${gradeStr}年生の漢字</div>
-               
                <div class="flex-1"></div>
-               
                <div class="text-[6mm] flex flex-col items-center">
                   <span class="vertical-rl">（</span>
                   <span class="h-[15mm]"></span>
                   <span class="vertical-rl">）</span>
                   <span class="mt-1 vertical-rl">組</span>
                </div>
-               
                <div class="h-[15mm]"></div>
-               
                <div class="text-[6mm] flex flex-col items-center mb-[5mm]">
                   <span class="vertical-rl tracking-[0.2em]">名前</span>
                   <span class="mt-2 vertical-rl">（</span>
@@ -285,7 +349,6 @@
                </div>
             </div>
             
-            <!-- メインの表 -->
             <div class="flex flex-row-reverse border-[2px] border-gray-800 box-border">
               ${wordBlocks}
             </div>
@@ -295,11 +358,12 @@
       `;
     }
 
-    // 4. ストック編集テーブル
     function renderStockEditor(typeStr) {
-      const isType2 = typeStr === 'stock2';
-      const data = isType2 ? state.stock2 : state.stock3;
-      const typeNum = isType2 ? 2 : 3;
+      let typeNum = 2;
+      if (typeStr === 'stock3') typeNum = 3;
+      if (typeStr === 'stock4') typeNum = 4;
+      
+      const data = getTargetStock(typeNum);
       
       const rows = data.map(item => `
         <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
@@ -308,12 +372,12 @@
             <td class="p-3">
               <input type="text" 
                      class="border border-gray-300 rounded-lg px-3 py-2 w-full max-w-[140px] focus:outline-none focus:ring-2 focus:ring-emerald-400" 
-                     value="${item.words[i] || ''}" 
-                     onchange="updateWord(${typeNum}, ${item.id}, ${i}, this.value)">
+                     value="${escapeHTML(item.words[i] || '')}" 
+                     oninput="updateWord(${typeNum}, '${item.id}', ${i}, this.value)">
             </td>
           `).join('')}
           <td class="p-3 text-center">
-            <button onclick="deleteWord(${typeNum}, ${item.id})" class="text-red-500 hover:text-red-700 hover:bg-red-50 px-3 py-1 rounded transition-colors">削除</button>
+            <button type="button" onclick="confirmDelete(${typeNum}, '${item.id}')" class="text-red-500 hover:text-red-700 hover:bg-red-50 px-3 py-1 rounded transition-colors font-bold">削除</button>
           </td>
         </tr>
       `).join('');
@@ -321,13 +385,24 @@
       return `
         <div class="p-4 md:p-8 w-full max-w-5xl mx-auto no-print">
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-6 gap-4">
-            <h2 class="text-2xl font-bold text-gray-800 border-b-4 border-emerald-400 pb-2 inline-block">${typeNum}文字の漢字ストック</h2>
+            <div>
+              <h2 class="text-2xl font-bold text-gray-800 border-b-4 border-emerald-400 pb-2 inline-block mb-2">${typeNum}文字の漢字ストック</h2>
+              <p class="text-sm text-gray-500 font-bold flex items-center gap-1">
+                <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                入力内容はブラウザに自動保存されます
+              </p>
+              ${typeNum === 4 ? `<p class="text-sm text-sky-600 font-bold mt-1 ml-5">※2文字、3文字の単語も混ぜて追加・練習が可能です。</p>` : ''}
+            </div>
             <div class="flex flex-wrap gap-3">
-              <button onclick="importCSV(${typeNum})" class="bg-blue-100 text-blue-700 border border-blue-300 px-4 py-2 rounded-full font-bold shadow-sm hover:bg-blue-200 transition-colors flex items-center gap-2">
+              <button type="button" onclick="triggerImportCSV(${typeNum})" class="bg-blue-100 text-blue-700 border border-blue-300 px-4 py-2 rounded-full font-bold shadow-sm hover:bg-blue-200 transition-colors flex items-center gap-2">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                CSV読み込み
+                CSV読込
               </button>
-              <button onclick="addWord(${typeNum})" class="bg-emerald-500 text-white px-5 py-2 rounded-full font-bold shadow hover:bg-emerald-600 transition-colors flex items-center gap-2">
+              <button type="button" onclick="exportCSV(${typeNum})" class="bg-indigo-100 text-indigo-700 border border-indigo-300 px-4 py-2 rounded-full font-bold shadow-sm hover:bg-indigo-200 transition-colors flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                CSV保存
+              </button>
+              <button type="button" onclick="addWord(${typeNum})" class="bg-emerald-500 text-white px-5 py-2 rounded-full font-bold shadow hover:bg-emerald-600 transition-colors flex items-center gap-2">
                 <span>＋</span> 新しい行を追加
               </button>
             </div>
@@ -353,7 +428,55 @@
       `;
     }
 
-    // --- メインレンダリング処理 ---
+    // --- カスタムポップアップ（モーダル） ---
+    function renderModal() {
+      if (!state.modal) return '';
+      let content = '';
+
+      if (state.modal.type === 'delete') {
+        content = `
+          <h3 class="text-xl font-bold mb-4 text-gray-800">確認</h3>
+          <p class="mb-8 text-gray-600">この行のデータを削除しますか？</p>
+          <div class="flex justify-end gap-4">
+            <button onclick="closeModal()" class="px-5 py-2 bg-gray-200 text-gray-700 rounded-lg font-bold hover:bg-gray-300 transition-colors">キャンセル</button>
+            <button onclick="executeDelete()" class="px-5 py-2 bg-red-500 text-white rounded-lg font-bold hover:bg-red-600 transition-colors shadow-sm">削除する</button>
+          </div>
+        `;
+      } else if (state.modal.type === 'import') {
+        content = `
+          <h3 class="text-xl font-bold mb-4 text-gray-800">CSV読み込み確認</h3>
+          <p class="mb-6 text-gray-600">CSVから <span class="font-bold text-lg text-emerald-600">${state.modal.newData.length}</span> 件のデータを読み込みました。<br>どのように追加しますか？</p>
+          <div class="flex flex-col gap-3">
+            <button onclick="executeImport('overwrite')" class="px-4 py-3 bg-red-500 text-white rounded-lg font-bold hover:bg-red-600 transition-colors shadow-sm text-left">
+              🔄 既存のデータをすべて「上書き」する
+            </button>
+            <button onclick="executeImport('append')" class="px-4 py-3 bg-emerald-500 text-white rounded-lg font-bold hover:bg-emerald-600 transition-colors shadow-sm text-left">
+              ➕ 既存のデータの末尾に「追加」する
+            </button>
+            <button onclick="closeModal()" class="px-4 py-3 bg-gray-200 text-gray-700 rounded-lg font-bold hover:bg-gray-300 transition-colors text-center mt-2">
+              キャンセル
+            </button>
+          </div>
+        `;
+      } else if (state.modal.type === 'alert') {
+        content = `
+          <h3 class="text-xl font-bold mb-4 text-gray-800">お知らせ</h3>
+          <p class="mb-8 text-gray-600 leading-relaxed">${state.modal.message}</p>
+          <div class="flex justify-end">
+            <button onclick="closeModal()" class="px-6 py-2 bg-sky-500 text-white rounded-lg font-bold hover:bg-sky-600 transition-colors shadow-sm">OK</button>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center p-4 no-print">
+          <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full border border-gray-100">
+            ${content}
+          </div>
+        </div>
+      `;
+    }
+
     function render() {
       const app = document.getElementById('app');
       
@@ -372,7 +495,7 @@
         `;
       } else {
         content = `
-          <div class="flex-1 overflow-auto bg-gray-50">
+          <div class="flex-1 overflow-auto bg-gray-50 relative">
             ${renderStockEditor(state.activeTab)}
           </div>
         `;
@@ -382,6 +505,7 @@
         <div class="h-screen flex flex-col overflow-hidden">
           ${renderTabs()}
           ${content}
+          ${renderModal()}
         </div>
       `;
     }
@@ -400,47 +524,81 @@
 
     window.changePrintType = function(type) {
       state.printType = type;
-      const data = type === 2 ? state.stock2 : state.stock3;
-      state.printId = data[0] ? data[0].id : 1;
+      const data = getTargetStock(type);
+      state.printId = data[0] ? data[0].id : "1";
       render();
     };
 
     window.changePrintId = function(id) {
-      state.printId = id;
+      state.printId = String(id);
       render();
     };
 
     window.updateWord = function(type, id, index, value) {
-      const data = type === 2 ? state.stock2 : state.stock3;
-      const item = data.find(d => d.id === id);
-      if (item) {
-        item.words[index] = value;
-        saveState();
-      }
+      const targetId = String(id);
+      const updateFn = item => {
+        if (item.id === targetId) {
+          const newWords = [...item.words];
+          newWords[index] = value;
+          return { ...item, words: newWords };
+        }
+        return item;
+      };
+
+      if (type === 2) state.stock2 = state.stock2.map(updateFn);
+      else if (type === 3) state.stock3 = state.stock3.map(updateFn);
+      else state.stock4 = state.stock4.map(updateFn);
+      
+      saveState();
     };
 
     window.addWord = function(type) {
-      const data = type === 2 ? state.stock2 : state.stock3;
-      const newId = data.length > 0 ? Math.max(...data.map(d => d.id)) + 1 : 1;
-      data.push({ id: newId, words: ["", "", "", ""] });
+      const data = getTargetStock(type);
+      const currentIds = data.map(d => parseInt(d.id, 10)).filter(id => !isNaN(id));
+      const maxId = currentIds.length > 0 ? Math.max(...currentIds) : 0;
+      const newId = String(maxId + 1);
+      
+      const newItem = { id: newId, words: ["", "", "", ""] };
+      
+      if (type === 2) state.stock2 = [...state.stock2, newItem];
+      else if (type === 3) state.stock3 = [...state.stock3, newItem];
+      else state.stock4 = [...state.stock4, newItem];
+      
       saveState();
       render();
     };
 
-    window.deleteWord = function(type, id) {
-      if (confirm(`番号 ${id} のデータを削除しますか？`)) {
-        if (type === 2) {
-          state.stock2 = state.stock2.filter(d => d.id !== id);
-        } else {
-          state.stock3 = state.stock3.filter(d => d.id !== id);
-        }
-        if (state.printId === id) state.printId = 1;
-        saveState();
-        render();
-      }
+    // --- ポップアップ（モーダル）制御用関数 ---
+    window.closeModal = function() {
+      state.modal = null;
+      render();
     };
 
-    window.importCSV = function(type) {
+    window.confirmDelete = function(type, id) {
+      state.modal = { type: 'delete', targetType: type, targetId: String(id) };
+      render();
+    };
+
+    window.executeDelete = function() {
+      const type = state.modal.targetType;
+      const targetId = state.modal.targetId;
+      const filterFn = d => d.id !== targetId;
+      
+      if (type === 2) state.stock2 = state.stock2.filter(filterFn);
+      else if (type === 3) state.stock3 = state.stock3.filter(filterFn);
+      else state.stock4 = state.stock4.filter(filterFn);
+      
+      const remainingData = getTargetStock(type);
+      if (!remainingData.some(d => d.id === state.printId)) {
+        state.printId = remainingData.length > 0 ? remainingData[0].id : "1";
+      }
+      
+      state.modal = null;
+      saveState();
+      render();
+    };
+
+    window.triggerImportCSV = function(type) {
       const input = document.createElement('input');
       input.type = 'file';
       input.accept = '.csv';
@@ -448,7 +606,6 @@
         const file = e.target.files[0];
         if (!file) return;
 
-        // 文字化け対策: Excelから出力されたCSVはShift_JISが多いため対応
         const readCSV = (encoding) => {
           return new Promise((resolve) => {
             const reader = new FileReader();
@@ -458,9 +615,7 @@
         };
 
         readCSV('Shift_JIS').then(text => {
-          if (text.includes('')) {
-            return readCSV('UTF-8');
-          }
+          if (text.includes('')) return readCSV('UTF-8');
           return text;
         }).then(text => {
           const lines = text.split(/\r?\n/);
@@ -471,7 +626,6 @@
             if (!line.trim()) continue;
             const cols = line.split(',').map(c => c.trim().replace(/^"|"$/g, ''));
             
-            // 行の中から番号（数字）が入っている列を探す
             let numIndex = -1;
             for (let i = 0; i < cols.length; i++) {
               if (cols[i] && !isNaN(parseInt(cols[i])) && parseInt(cols[i]) > 0 && parseInt(cols[i]) < 1000) {
@@ -481,41 +635,96 @@
             }
             
             if (numIndex !== -1 && cols.length >= numIndex + 3) {
-              // CSVの列構成に合わせて（左から単語4,3,2,1の順）データを抽出
-              let w4 = cols[numIndex+1] || ""; // 単語4(左)
-              let w3 = cols[numIndex+2] || ""; // 単語3
-              let w2 = cols[numIndex+3] || ""; // 単語2
-              let w1 = cols[numIndex+4] || ""; // 単語1(右)
+              let w4 = cols[numIndex+1] || "";
+              let w3 = cols[numIndex+2] || "";
+              let w2 = cols[numIndex+3] || "";
+              let w1 = cols[numIndex+4] || "";
               
               if (w1 || w2 || w3 || w4) {
-                newData.push({
-                  id: currentId++,
-                  words: [w1, w2, w3, w4] // UIの「右から左」にマッピング
-                });
+                newData.push({ id: String(currentId++), words: [w1, w2, w3, w4] });
               }
             }
           }
           
           if (newData.length > 0) {
-            if (confirm(`CSVから ${newData.length} 件のデータを読み込みました。\n\n[OK] 既存のデータをすべて「上書き（置き換え）」する\n[キャンセル] 既存のデータの末尾に「追加」する`)) {
-              if (type === 2) state.stock2 = newData;
-              else state.stock3 = newData;
-            } else {
-              const targetStock = type === 2 ? state.stock2 : state.stock3;
-              let maxId = targetStock.length > 0 ? Math.max(...targetStock.map(d => d.id)) : 0;
-              const appendedData = newData.map(d => ({...d, id: ++maxId}));
-              if (type === 2) state.stock2 = [...state.stock2, ...appendedData];
-              else state.stock3 = [...state.stock3, ...appendedData];
-            }
-            saveState();
+            state.modal = { type: 'import', targetType: type, newData: newData };
             render();
-            alert('CSVの読み込みが完了しました。');
           } else {
-            alert('CSVからデータを読み取れませんでした。\n番号の右隣に単語が並んでいる形式か確認してください。');
+            state.modal = { type: 'alert', message: 'CSVからデータを読み取れません。<br>番号の右隣に単語が並んでいる形式か確認してください。' };
+            render();
           }
         });
       };
       input.click();
+    };
+
+    window.executeImport = function(mode) {
+      const type = state.modal.targetType;
+      const newData = state.modal.newData;
+
+      if (mode === 'overwrite') {
+        if (type === 2) state.stock2 = newData;
+        else if (type === 3) state.stock3 = newData;
+        else state.stock4 = newData;
+      } else {
+        const targetStock = getTargetStock(type);
+        const currentIds = targetStock.map(d => parseInt(d.id, 10)).filter(n => !isNaN(n));
+        let maxId = currentIds.length > 0 ? Math.max(...currentIds) : 0;
+        
+        const appendedData = newData.map(d => {
+          maxId++;
+          return {...d, id: String(maxId)};
+        });
+        
+        if (type === 2) state.stock2 = [...state.stock2, ...appendedData];
+        else if (type === 3) state.stock3 = [...state.stock3, ...appendedData];
+        else state.stock4 = [...state.stock4, ...appendedData];
+      }
+      
+      state.modal = { type: 'alert', message: 'CSVの読み込みが完了しました。' };
+      saveState();
+      render();
+    };
+
+    window.exportCSV = function(type) {
+      const data = getTargetStock(type);
+      if (data.length === 0) {
+        state.modal = { type: 'alert', message: '保存するデータがありません。' };
+        render();
+        return;
+      }
+
+      let csvContent = "番号,単語4(左),単語3,単語2,単語1(右)\n";
+      
+      data.forEach(item => {
+        const w4 = item.words[3] || "";
+        const w3 = item.words[2] || "";
+        const w2 = item.words[1] || "";
+        const w1 = item.words[0] || "";
+        
+        const escapeCSV = (str) => {
+          if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+            return `"${str.replace(/"/g, '""')}"`;
+          }
+          return str;
+        };
+
+        const row = [item.id, escapeCSV(w4), escapeCSV(w3), escapeCSV(w2), escapeCSV(w1)];
+        csvContent += row.join(',') + "\n";
+      });
+
+      const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+      const blob = new Blob([bom, csvContent], { type: 'text/csv;charset=utf-8;' });
+      
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      const dateStr = new Date().toLocaleDateString('ja-JP').replace(/\//g, '');
+      link.setAttribute("download", `漢字ストック_${type}文字_${dateStr}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     };
 
     // 初期化
