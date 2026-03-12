@@ -243,7 +243,7 @@
       const data = getTargetStock(state.printType);
       const options = data.map(item => `
         <option value="${item.id}" ${state.printId === item.id ? 'selected' : ''}>
-          番号 ${item.id} （${escapeHTML(item.words.filter(w=>w).join(', ')) || '未入力'}）
+          番号 ${item.id} （${escapeHTML(item.words.slice(0, 4).filter(w=>w).join(', ')) || '未入力'}）
         </option>
       `).join('');
 
@@ -304,7 +304,8 @@
       const kansuuji = { 2: '二', 3: '三', 4: '四', 5: '五', 6: '六' };
       const gradeStr = kansuuji[state.grade] || '三';
 
-      const words = [...targetItem.words];
+      // ★列が増殖するバグを根絶：常に最大4単語（4列）までに強制カットする
+      const words = [...targetItem.words].slice(0, 4);
       while(words.length < 4) words.push("");
 
       const totalRows = 16; 
@@ -312,9 +313,12 @@
       let wordBlocks = '';
       
       words.forEach((word, index) => {
-        const wLen = (word && word.length > 0) ? word.length : state.printType;
-        let colRows = 16;
+        // ★1文字しか出ないバグを根絶：
+        // 実際の文字数が少なくても、設定したモード（2文字モード等）の枠サイズを強制的に確保する
+        let actualLen = word ? word.length : 0;
+        const wLen = actualLen > 0 ? Math.max(actualLen, state.printType) : state.printType;
         
+        let colRows = 16;
         if (wLen === 3) colRows = 15;      
         else if (wLen === 5) colRows = 15; 
         else colRows = wLen * Math.floor(16 / wLen); 
@@ -322,6 +326,7 @@
         if (colRows === 0) colRows = state.printType * Math.floor(16 / state.printType); 
 
         const chars = word ? word.split('') : [];
+        // 足りない文字数分を空文字で埋めることで、自動的に「文字＋空欄」のセットが出来上がる
         while(chars.length < wLen) chars.push('');
 
         let furiRightRows = '';
@@ -329,26 +334,26 @@
         let emptyRows = '';
         
         for(let i = 0; i < totalRows; i++) {
-          // 強制的にサイズを維持するCSSクラスを付与
-          furiRightRows += `<div class="print-furi border-b border-gray-800 box-border last:border-b-0"></div>`;
+          furiRightRows += `<div class="print-furi border-b border-gray-800 box-border last:border-b-0" style="width: 6mm; height: 16mm; min-width: 6mm; flex-shrink: 0;"></div>`;
           
           if (i < colRows) {
             const char = chars[i % wLen];
-            const isSample = i < wLen;
+            // 文字が入っているマスだけ見本扱い（黒文字）にする
+            const isSample = i < wLen && char !== ''; 
             const textStyleClass = isSample ? 'text-gray-900 font-bold' : 'text-gray-300 font-normal';
             nazoriRows += `
-              <div class="masu print-masu relative flex items-center justify-center horizontal-tb border-b border-gray-800 box-border last:border-b-0">
+              <div class="masu print-masu relative flex items-center justify-center horizontal-tb border-b border-gray-800 box-border last:border-b-0" style="width: 16mm; height: 16mm; min-width: 16mm; flex-shrink: 0;">
                 <span class="relative z-10 print-text ${textStyleClass} leading-none" style="transform: translateY(-0.5mm);">${escapeHTML(char)}</span>
               </div>
             `;
           } else {
             nazoriRows += `
-              <div class="masu print-masu relative flex items-center justify-center horizontal-tb border-b border-gray-800 box-border last:border-b-0"></div>
+              <div class="masu print-masu relative flex items-center justify-center horizontal-tb border-b border-gray-800 box-border last:border-b-0" style="width: 16mm; height: 16mm; min-width: 16mm; flex-shrink: 0;"></div>
             `;
           }
           
           emptyRows += `
-            <div class="masu print-masu relative flex items-center justify-center horizontal-tb border-b border-gray-800 box-border last:border-b-0"></div>
+            <div class="masu print-masu relative flex items-center justify-center horizontal-tb border-b border-gray-800 box-border last:border-b-0" style="width: 16mm; height: 16mm; min-width: 16mm; flex-shrink: 0;"></div>
           `;
         }
         
