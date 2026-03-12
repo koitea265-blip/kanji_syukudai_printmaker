@@ -286,29 +286,29 @@
         let nazoriRows = '';
         let emptyRows = '';
         
-        // 公開サイトでTailwind CSSが省略されてしまう不具合を防ぐため、
-        // 直接 "w-[16mm]", "h-[16mm]" などの決まったクラス名を書き込んでいます。
+        // 公開サイトでTailwind CSSが任意値を省略してしまう不具合を防ぐため、
+        // 動的な [ ] のクラスではなく、確実に効く style 属性（インラインCSS）でサイズを指定しています。
         for(let i = 0; i < totalRows; i++) {
-          furiRightRows += `<div class="w-[6mm] h-[16mm] border-b border-gray-800 box-border last:border-b-0"></div>`;
+          furiRightRows += `<div class="border-b border-gray-800 box-border last:border-b-0" style="width: 6mm; height: 16mm;"></div>`;
           
           if (i < colRows) {
             const char = chars[i % wLen];
             const isSample = i < wLen;
             const textStyleClass = isSample ? 'text-gray-900 font-bold' : 'text-gray-300 font-normal';
             nazoriRows += `
-              <div class="masu w-[16mm] h-[16mm] relative flex items-center justify-center horizontal-tb border-b border-gray-800 box-border last:border-b-0">
-                <span class="relative z-10 text-[14mm] ${textStyleClass} leading-none" style="transform: translateY(-0.5mm);">${escapeHTML(char)}</span>
+              <div class="masu relative flex items-center justify-center horizontal-tb border-b border-gray-800 box-border last:border-b-0" style="width: 16mm; height: 16mm;">
+                <span class="relative z-10 ${textStyleClass} leading-none" style="font-size: 14mm; transform: translateY(-0.5mm);">${escapeHTML(char)}</span>
               </div>
             `;
           } else {
             nazoriRows += `
-              <div class="masu w-[16mm] h-[16mm] relative flex items-center justify-center horizontal-tb border-b border-gray-800 box-border last:border-b-0">
+              <div class="masu relative flex items-center justify-center horizontal-tb border-b border-gray-800 box-border last:border-b-0" style="width: 16mm; height: 16mm;">
               </div>
             `;
           }
           
           emptyRows += `
-            <div class="masu w-[16mm] h-[16mm] relative flex items-center justify-center horizontal-tb border-b border-gray-800 box-border last:border-b-0">
+            <div class="masu relative flex items-center justify-center horizontal-tb border-b border-gray-800 box-border last:border-b-0" style="width: 16mm; height: 16mm;">
             </div>
           `;
         }
@@ -324,26 +324,25 @@
         `;
       });
 
-      // 外枠の全体の高さはインラインスタイルなので問題なく機能します
       return `
         <div class="print-container bg-white box-border shadow-xl print:shadow-none mx-auto flex items-center" style="width: 210mm; height: 297mm;">
           
-          <div class="flex flex-row-reverse items-start w-full pr-[12mm]" style="height: ${masuSize * totalRows}mm;">
+          <div class="flex flex-row-reverse items-start w-full" style="height: ${masuSize * totalRows}mm; padding-right: 12mm;">
             
-            <div class="w-[22mm] flex flex-col items-center horizontal-tb h-full ml-[2mm]">
-               <div class="text-[6.5mm] font-bold vertical-rl tracking-[0.3em] mt-[5mm]">${gradeStr}年生の漢字</div>
+            <div class="flex flex-col items-center horizontal-tb h-full" style="width: 22mm; margin-left: 2mm;">
+               <div class="font-bold vertical-rl tracking-[0.3em]" style="font-size: 6.5mm; margin-top: 5mm;">${gradeStr}年生の漢字</div>
                <div class="flex-1"></div>
-               <div class="text-[6mm] flex flex-col items-center">
+               <div class="flex flex-col items-center" style="font-size: 6mm;">
                   <span class="vertical-rl">（</span>
-                  <span class="h-[15mm]"></span>
+                  <span style="height: 15mm;"></span>
                   <span class="vertical-rl">）</span>
                   <span class="mt-1 vertical-rl">組</span>
                </div>
-               <div class="h-[15mm]"></div>
-               <div class="text-[6mm] flex flex-col items-center mb-[5mm]">
+               <div style="height: 15mm;"></div>
+               <div class="flex flex-col items-center" style="font-size: 6mm; margin-bottom: 5mm;">
                   <span class="vertical-rl tracking-[0.2em]">名前</span>
                   <span class="mt-2 vertical-rl">（</span>
-                  <span class="h-[50mm]"></span>
+                  <span style="height: 50mm;"></span>
                   <span class="vertical-rl">）</span>
                </div>
             </div>
