@@ -314,9 +314,9 @@
       let wordBlocks = '';
       
       words.forEach((word, index) => {
-        // 実際の文字数が少なくても、設定したモードの枠サイズを強制的に確保する
+        // ★実際の文字数（2文字や3文字）に合わせて、上に詰めて連続で表示されるように修正
         let actualLen = word ? word.length : 0;
-        const wLen = actualLen > 0 ? Math.max(actualLen, state.printType) : state.printType;
+        const wLen = actualLen > 0 ? actualLen : state.printType;
         
         let colRows = 16;
         if (wLen === 3) colRows = 15;      
