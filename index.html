@@ -266,8 +266,6 @@
 
       const totalRows = 16; 
       const masuSize = 16;
-      const furiSize = 6;
-      const textSize = 14;
       
       let wordBlocks = '';
       
@@ -288,27 +286,29 @@
         let nazoriRows = '';
         let emptyRows = '';
         
+        // 公開サイトでTailwind CSSが省略されてしまう不具合を防ぐため、
+        // 直接 "w-[16mm]", "h-[16mm]" などの決まったクラス名を書き込んでいます。
         for(let i = 0; i < totalRows; i++) {
-          furiRightRows += `<div class="w-[${furiSize}mm] h-[${masuSize}mm] border-b border-gray-800 box-border last:border-b-0"></div>`;
+          furiRightRows += `<div class="w-[6mm] h-[16mm] border-b border-gray-800 box-border last:border-b-0"></div>`;
           
           if (i < colRows) {
             const char = chars[i % wLen];
             const isSample = i < wLen;
             const textStyleClass = isSample ? 'text-gray-900 font-bold' : 'text-gray-300 font-normal';
             nazoriRows += `
-              <div class="masu w-[${masuSize}mm] h-[${masuSize}mm] relative flex items-center justify-center horizontal-tb border-b border-gray-800 box-border last:border-b-0">
-                <span class="relative z-10 text-[${textSize}mm] ${textStyleClass} leading-none" style="transform: translateY(-0.5mm);">${escapeHTML(char)}</span>
+              <div class="masu w-[16mm] h-[16mm] relative flex items-center justify-center horizontal-tb border-b border-gray-800 box-border last:border-b-0">
+                <span class="relative z-10 text-[14mm] ${textStyleClass} leading-none" style="transform: translateY(-0.5mm);">${escapeHTML(char)}</span>
               </div>
             `;
           } else {
             nazoriRows += `
-              <div class="masu w-[${masuSize}mm] h-[${masuSize}mm] relative flex items-center justify-center horizontal-tb border-b border-gray-800 box-border last:border-b-0">
+              <div class="masu w-[16mm] h-[16mm] relative flex items-center justify-center horizontal-tb border-b border-gray-800 box-border last:border-b-0">
               </div>
             `;
           }
           
           emptyRows += `
-            <div class="masu w-[${masuSize}mm] h-[${masuSize}mm] relative flex items-center justify-center horizontal-tb border-b border-gray-800 box-border last:border-b-0">
+            <div class="masu w-[16mm] h-[16mm] relative flex items-center justify-center horizontal-tb border-b border-gray-800 box-border last:border-b-0">
             </div>
           `;
         }
@@ -324,8 +324,7 @@
         `;
       });
 
-      // 全体を垂直方向中央にしつつ、左側に余白を持たせるため
-      // justify-center の代わりに右寄りの配置（pr-[12mm]等）を設定
+      // 外枠の全体の高さはインラインスタイルなので問題なく機能します
       return `
         <div class="print-container bg-white box-border shadow-xl print:shadow-none mx-auto flex items-center" style="width: 210mm; height: 297mm;">
           
