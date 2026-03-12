@@ -50,6 +50,49 @@
       }
     }
     
+    /* --- プリント用の絶対サイズ指定（公開サイトでのレイアウト崩れ・マス目潰れを完全防止） --- */
+    .print-furi {
+      width: 6mm !important;
+      min-width: 6mm !important;
+      max-width: 6mm !important;
+      height: 16mm !important;
+      flex-shrink: 0 !important;
+    }
+    .print-masu {
+      width: 16mm !important;
+      min-width: 16mm !important;
+      max-width: 16mm !important;
+      height: 16mm !important;
+      flex-shrink: 0 !important;
+    }
+    .print-text {
+      font-size: 14mm !important;
+    }
+    .print-name-area {
+      width: 22mm !important;
+      min-width: 22mm !important;
+      margin-left: 2mm !important;
+    }
+    .print-grade-text {
+      font-size: 6.5mm !important;
+      margin-top: 5mm !important;
+    }
+    .print-label-text {
+      font-size: 6mm !important;
+    }
+    .print-spacer-15 {
+      height: 15mm !important;
+      min-height: 15mm !important;
+    }
+    .print-spacer-50 {
+      height: 50mm !important;
+      min-height: 50mm !important;
+    }
+    .print-table-wrapper {
+      height: 256mm !important;
+      padding-right: 12mm !important;
+    }
+
     /* --- マス目のデザイン --- */
     .masu::before {
       content: '';
@@ -265,7 +308,6 @@
       while(words.length < 4) words.push("");
 
       const totalRows = 16; 
-      const masuSize = 16;
       
       let wordBlocks = '';
       
@@ -286,30 +328,27 @@
         let nazoriRows = '';
         let emptyRows = '';
         
-        // 公開サイトでTailwind CSSが任意値を省略してしまう不具合を防ぐため、
-        // 動的な [ ] のクラスではなく、確実に効く style 属性（インラインCSS）でサイズを指定しています。
         for(let i = 0; i < totalRows; i++) {
-          furiRightRows += `<div class="border-b border-gray-800 box-border last:border-b-0" style="width: 6mm; height: 16mm;"></div>`;
+          // 強制的にサイズを維持するCSSクラスを付与
+          furiRightRows += `<div class="print-furi border-b border-gray-800 box-border last:border-b-0"></div>`;
           
           if (i < colRows) {
             const char = chars[i % wLen];
             const isSample = i < wLen;
             const textStyleClass = isSample ? 'text-gray-900 font-bold' : 'text-gray-300 font-normal';
             nazoriRows += `
-              <div class="masu relative flex items-center justify-center horizontal-tb border-b border-gray-800 box-border last:border-b-0" style="width: 16mm; height: 16mm;">
-                <span class="relative z-10 ${textStyleClass} leading-none" style="font-size: 14mm; transform: translateY(-0.5mm);">${escapeHTML(char)}</span>
+              <div class="masu print-masu relative flex items-center justify-center horizontal-tb border-b border-gray-800 box-border last:border-b-0">
+                <span class="relative z-10 print-text ${textStyleClass} leading-none" style="transform: translateY(-0.5mm);">${escapeHTML(char)}</span>
               </div>
             `;
           } else {
             nazoriRows += `
-              <div class="masu relative flex items-center justify-center horizontal-tb border-b border-gray-800 box-border last:border-b-0" style="width: 16mm; height: 16mm;">
-              </div>
+              <div class="masu print-masu relative flex items-center justify-center horizontal-tb border-b border-gray-800 box-border last:border-b-0"></div>
             `;
           }
           
           emptyRows += `
-            <div class="masu relative flex items-center justify-center horizontal-tb border-b border-gray-800 box-border last:border-b-0" style="width: 16mm; height: 16mm;">
-            </div>
+            <div class="masu print-masu relative flex items-center justify-center horizontal-tb border-b border-gray-800 box-border last:border-b-0"></div>
           `;
         }
         
@@ -327,22 +366,22 @@
       return `
         <div class="print-container bg-white box-border shadow-xl print:shadow-none mx-auto flex items-center" style="width: 210mm; height: 297mm;">
           
-          <div class="flex flex-row-reverse items-start w-full" style="height: ${masuSize * totalRows}mm; padding-right: 12mm;">
+          <div class="flex flex-row-reverse items-start w-full print-table-wrapper">
             
-            <div class="flex flex-col items-center horizontal-tb h-full" style="width: 22mm; margin-left: 2mm;">
-               <div class="font-bold vertical-rl tracking-[0.3em]" style="font-size: 6.5mm; margin-top: 5mm;">${gradeStr}年生の漢字</div>
+            <div class="flex flex-col items-center horizontal-tb h-full print-name-area">
+               <div class="font-bold vertical-rl tracking-[0.3em] print-grade-text">${gradeStr}年生の漢字</div>
                <div class="flex-1"></div>
-               <div class="flex flex-col items-center" style="font-size: 6mm;">
+               <div class="flex flex-col items-center print-label-text">
                   <span class="vertical-rl">（</span>
-                  <span style="height: 15mm;"></span>
+                  <span class="print-spacer-15"></span>
                   <span class="vertical-rl">）</span>
                   <span class="mt-1 vertical-rl">組</span>
                </div>
-               <div style="height: 15mm;"></div>
-               <div class="flex flex-col items-center" style="font-size: 6mm; margin-bottom: 5mm;">
+               <div class="print-spacer-15"></div>
+               <div class="flex flex-col items-center mb-[5mm] print-label-text">
                   <span class="vertical-rl tracking-[0.2em]">名前</span>
                   <span class="mt-2 vertical-rl">（</span>
-                  <span style="height: 50mm;"></span>
+                  <span class="print-spacer-50"></span>
                   <span class="vertical-rl">）</span>
                </div>
             </div>
