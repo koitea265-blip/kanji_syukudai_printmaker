@@ -189,9 +189,10 @@
         .replace(/'/g, '&#39;');
     }
 
-    const savedStock2 = localStorage.getItem('kanjiStock2_v10') || localStorage.getItem('kanjiStock2_v9') || localStorage.getItem('kanjiStock2_v8');
-    const savedStock3 = localStorage.getItem('kanjiStock3_v10') || localStorage.getItem('kanjiStock3_v9') || localStorage.getItem('kanjiStock3_v8');
-    const savedStock4 = localStorage.getItem('kanjiStock4_v10');
+    // 古いキャッシュをリセットし、初期データに戻すためにバージョンを v11 に更新
+    const savedStock2 = localStorage.getItem('kanjiStock2_v11'); 
+    const savedStock3 = localStorage.getItem('kanjiStock3_v11');
+    const savedStock4 = localStorage.getItem('kanjiStock4_v11');
 
     // --- 状態管理 ---
     let state = {
@@ -207,9 +208,9 @@
 
     function saveState() {
       localStorage.setItem('kanjiGrade', state.grade.toString());
-      localStorage.setItem('kanjiStock2_v10', JSON.stringify(state.stock2));
-      localStorage.setItem('kanjiStock3_v10', JSON.stringify(state.stock3));
-      localStorage.setItem('kanjiStock4_v10', JSON.stringify(state.stock4));
+      localStorage.setItem('kanjiStock2_v11', JSON.stringify(state.stock2));
+      localStorage.setItem('kanjiStock3_v11', JSON.stringify(state.stock3));
+      localStorage.setItem('kanjiStock4_v11', JSON.stringify(state.stock4));
     }
 
     // --- データ取得ヘルパー ---
@@ -304,7 +305,7 @@
       const kansuuji = { 2: '二', 3: '三', 4: '四', 5: '五', 6: '六' };
       const gradeStr = kansuuji[state.grade] || '三';
 
-      // ★列が増殖するバグを根絶：常に最大4単語（4列）までに強制カットする
+      // 列が増殖するバグを根絶：常に最大4単語（4列）までに強制カットする
       const words = [...targetItem.words].slice(0, 4);
       while(words.length < 4) words.push("");
 
@@ -313,8 +314,7 @@
       let wordBlocks = '';
       
       words.forEach((word, index) => {
-        // ★1文字しか出ないバグを根絶：
-        // 実際の文字数が少なくても、設定したモード（2文字モード等）の枠サイズを強制的に確保する
+        // 実際の文字数が少なくても、設定したモードの枠サイズを強制的に確保する
         let actualLen = word ? word.length : 0;
         const wLen = actualLen > 0 ? Math.max(actualLen, state.printType) : state.printType;
         
@@ -326,7 +326,6 @@
         if (colRows === 0) colRows = state.printType * Math.floor(16 / state.printType); 
 
         const chars = word ? word.split('') : [];
-        // 足りない文字数分を空文字で埋めることで、自動的に「文字＋空欄」のセットが出来上がる
         while(chars.length < wLen) chars.push('');
 
         let furiRightRows = '';
