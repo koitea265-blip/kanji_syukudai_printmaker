@@ -199,6 +199,7 @@
       activeTab: 'print',
       printType: 2,
       printId: "1",
+      samplePosition: localStorage.getItem('kanjiSamplePos') || 'left', // デフォルトを左側（2列目）に変更
       grade: Number(localStorage.getItem('kanjiGrade')) || 3,
       stock2: normalizeData(savedStock2 ? JSON.parse(savedStock2) : INITIAL_DATA_2),
       stock3: normalizeData(savedStock3 ? JSON.parse(savedStock3) : INITIAL_DATA_3),
@@ -208,6 +209,7 @@
 
     function saveState() {
       localStorage.setItem('kanjiGrade', state.grade.toString());
+      localStorage.setItem('kanjiSamplePos', state.samplePosition); // お手本の位置を保存
       localStorage.setItem('kanjiStock2_v11', JSON.stringify(state.stock2));
       localStorage.setItem('kanjiStock3_v11', JSON.stringify(state.stock3));
       localStorage.setItem('kanjiStock4_v11', JSON.stringify(state.stock4));
@@ -272,6 +274,14 @@
             </div>
           </div>
 
+          <div class="mb-6">
+            <label class="block mb-2 font-bold text-gray-600 text-sm">お手本の位置</label>
+            <div class="flex bg-gray-100 p-1 rounded-lg">
+              <button type="button" onclick="changeSamplePosition('right')" class="flex-1 py-2 rounded-md font-bold transition-all ${state.samplePosition === 'right' ? 'bg-white shadow text-sky-600' : 'text-gray-500 hover:bg-gray-200'}">右側 (1列目)</button>
+              <button type="button" onclick="changeSamplePosition('left')" class="flex-1 py-2 rounded-md font-bold transition-all ${state.samplePosition === 'left' ? 'bg-white shadow text-sky-600' : 'text-gray-500 hover:bg-gray-200'}">左側 (2列目)</button>
+            </div>
+          </div>
+
           <div class="mb-8">
             <label class="block mb-2 font-bold text-gray-600 text-sm">プリント番号を選択</label>
             <select onchange="changePrintId(this.value)" class="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 cursor-pointer">
@@ -314,7 +324,6 @@
       let wordBlocks = '';
       
       words.forEach((word, index) => {
-        // ★実際の文字数（2文字や3文字）に合わせて、上に詰めて連続で表示されるように修正
         let actualLen = word ? word.length : 0;
         const wLen = actualLen > 0 ? actualLen : state.printType;
         
@@ -358,11 +367,15 @@
         
         const borderLeft = index !== 3 ? 'border-l border-gray-800' : '';
         
+        // お手本の位置状態によって、1列目と2列目の表示順を切り替える
+        const col1 = state.samplePosition === 'left' ? emptyRows : nazoriRows;
+        const col2 = state.samplePosition === 'left' ? nazoriRows : emptyRows;
+
         wordBlocks += `
           <div class="flex flex-row-reverse ${borderLeft}">
             <div class="flex flex-col">${furiRightRows}</div>
-            <div class="flex flex-col border-r border-gray-800">${nazoriRows}</div>
-            <div class="flex flex-col border-r border-gray-800">${emptyRows}</div>
+            <div class="flex flex-col border-r border-gray-800">${col1}</div>
+            <div class="flex flex-col border-r border-gray-800">${col2}</div>
           </div>
         `;
       });
@@ -567,6 +580,13 @@
       state.printType = type;
       const data = getTargetStock(type);
       state.printId = data[0] ? data[0].id : "1";
+      render();
+    };
+
+    // お手本の位置を変更する処理を追加
+    window.changeSamplePosition = function(pos) {
+      state.samplePosition = pos;
+      saveState();
       render();
     };
 
