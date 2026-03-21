@@ -233,7 +233,7 @@
         <div class="no-print bg-sky-600 text-white shadow-md z-10 flex-shrink-0 relative">
           <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center px-4">
             <h1 class="text-xl font-bold py-4 pr-8 border-b border-sky-500 sm:border-none w-full sm:w-auto text-center sm:text-left">
-              📝 漢字プリントメーカーV2
+              📝 漢字宿題用プリントメーカーV2
             </h1>
             <div class="flex w-full sm:w-auto overflow-x-auto">
               ${tabsHTML}
@@ -370,7 +370,6 @@
           cells.forEach((cell) => {
             let inner = '';
             if (!cell.isBlank && isSampleCol) {
-              // 補正値を-1.5mmから-1.0mmに変更し、表示位置をわずかに下げた
               inner = `<span class="relative z-10 print-text leading-none ${cell.isSample ? 'text-gray-900 font-bold' : 'text-gray-300 font-normal'}" style="transform: translateY(-1.0mm);">${escapeHTML(cell.char)}</span>`;
             }
             colHTML += `<div class="masu print-masu relative flex items-center justify-center horizontal-tb border-b border-gray-800 box-border last:border-b-0" style="width: 16mm; height: 16mm">${inner}</div>`;
