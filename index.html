@@ -144,10 +144,14 @@
     ];
 
     const INITIAL_DATA_4 = [
-      ...createData(4, [["春夏秋冬", "花鳥風月", "一日一歩", "大器晩成"], ["一生懸命", "以心伝心", "十人十色", "四字熟語"], ["温故知新", "一期一会", "悪戦苦闘", "七転八起"]], 4)
+      ...createData(2, [["一石二鳥", "春夏秋冬", "東西南北", "上下左右"], ["一日千秋", "十人十色", "百発百中", "千載一遇"]], 4),
+      ...createData(3, [["悪戦苦闘", "以心伝心", "一期一会", "一挙両得"], ["完全無欠", "起死回生", "空前絶後", "言語道断"]], 4),
+      ...createData(4, [["自給自足", "試行錯誤", "自業自得", "質実剛健"], ["十中八九", "前代未聞", "絶体絶命", "創意工夫"]], 4),
+      ...createData(5, [["単刀直入", "適材適所", "電光石火", "日進月歩"], ["半信半疑", "品行方正", "本末転倒", "無我夢中"]], 4),
+      ...createData(6, [["油断大敵", "臨機応変", "老若男女", "和洋折衷"], ["一網打尽", "一目瞭然", "一朝一夕", "一刀両断"]], 4)
     ];
 
-    const STORAGE_KEY_PREFIX = 'kanjiApp_v4_'; // React版v4と互換性を持たせる
+    const STORAGE_KEY_PREFIX = 'kanjiApp_v5_'; // 4文字データ拡充のためv5にアップデート
 
     // --- ユーティリティ ---
     function normalizeData(data) {
@@ -366,8 +370,8 @@
           cells.forEach((cell) => {
             let inner = '';
             if (!cell.isBlank && isSampleCol) {
-              // 修正点: html2canvasでのレンダリングずれの原因となるtransformを削除
-              inner = `<span class="relative z-10 print-text leading-none ${cell.isSample ? 'text-gray-900 font-bold' : 'text-gray-300 font-normal'}">${escapeHTML(cell.char)}</span>`;
+              // ブラウザ標準印刷に一本化したため、フォントの重心補正用transformを再導入
+              inner = `<span class="relative z-10 print-text leading-none ${cell.isSample ? 'text-gray-900 font-bold' : 'text-gray-300 font-normal'}" style="transform: translateY(-1.5mm);">${escapeHTML(cell.char)}</span>`;
             }
             colHTML += `<div class="masu print-masu relative flex items-center justify-center horizontal-tb border-b border-gray-800 box-border last:border-b-0" style="width: 16mm; height: 16mm">${inner}</div>`;
           });
